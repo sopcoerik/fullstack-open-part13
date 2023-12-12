@@ -48,6 +48,10 @@ blogsRouter.post('/', tokenExtractor, async (request, response, next) => {
     const date = new Date().toString().substring(16, 34).replace(' GMT', '')
     const user = await User.findByPk(request.decodedToken.id)
 
+    if(request.body.yearWritten < 1991 || request.body.yearWritten > 2022) {
+      response.status(404).send({ error: 'we do not accept blogs older than 1991 or younger than the current year' })
+    }
+
     const blog = await Blog.create({...request.body, userId: user.id, date})
     response.json(blog)
   } catch (error) {
